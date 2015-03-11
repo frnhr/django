@@ -353,7 +353,9 @@ class BaseModelAdmin(six.with_metaclass(RenameBaseModelAdminMethods)):
         """
         Hook for specifying custom readonly fields.
         """
-        return self.readonly_fields
+        if not obj or self.has_change_permission(request, obj):
+            return self.readonly_fields
+        return list(self.readonly_fields or ()) + flatten_fieldsets(self.declared_fieldsets or ())  # revisit in Django 1.9
 
     def get_prepopulated_fields(self, request, obj=None):
         """
