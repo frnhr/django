@@ -33,13 +33,12 @@ version = __import__('django').get_version()
 
 
 setup(
-    name='Django',
+    name='tocka-Django',
     version=version,
-    url='http://www.djangoproject.com/',
-    author='Django Software Foundation',
-    author_email='foundation@djangoproject.com',
-    description=('A high-level Python Web framework that encourages '
-                 'rapid development and clean, pragmatic design.'),
+    url='https://github.com/frnhr/django/',
+    author='some tweaks by frnhr',
+    author_email='frnhr@changeset.hr',
+    description=('Fork with some graceful changes to django-admin'),
     license='BSD',
     packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
     include_package_data=True,
