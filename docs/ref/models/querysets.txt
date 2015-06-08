@@ -348,6 +348,11 @@ You can tell if a query is ordered or not by checking the
 :attr:`.QuerySet.ordered` attribute, which will be ``True`` if the
 ``QuerySet`` has been ordered in any way.
 
+Each ``order_by()`` call will clear any previous ordering. For example, this
+query will be ordered by ``pub_date`` and not ``headline``::
+
+    Entry.objects.order_by('headline').order_by('pub_date')
+
 .. warning::
 
     Ordering is not a free operation. Each field you add to the ordering
@@ -1340,6 +1345,30 @@ one, doing so will result in an error.
     might otherwise call ``defer()``. This makes your code more explicit to the
     reader, is slightly faster and consumes a little less memory in the Python
     process.
+
+    For example, both of these models use the same underlying database table::
+
+        class CommonlyUsedModel(models.Model):
+            f1 = models.CharField(max_length=10)
+
+            class Meta:
+                managed = False
+                db_table = 'app_largetable'
+
+        class ManagedModel(models.Model):
+            f1 = models.CharField(max_length=10)
+            f2 = models.CharField(max_length=10)
+
+            class Meta:
+                db_table = 'app_largetable'
+
+        # Two equivalent QuerySets:
+        CommonlyUsedModel.objects.all()
+        ManagedModel.objects.all().defer('f2')
+
+    If many fields need to be duplicated in the unmanaged model, it may be best
+    to create an abstract model with the shared fields and then have the
+    unmanaged and managed models inherit from the abstract model.
 
 .. note::
 

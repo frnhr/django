@@ -1,10 +1,10 @@
 import datetime
 import unittest
 
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, skipIfDBFeature
 from django.db import connection, DatabaseError, IntegrityError, OperationalError
-from django.db.models.fields import (BinaryField, BooleanField, CharField, IntegerField,
-    PositiveIntegerField, SlugField, TextField)
+from django.db.models.fields import (BigIntegerField, BinaryField, BooleanField, CharField,
+    IntegerField, PositiveIntegerField, SlugField, TextField)
 from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOneField
 from django.db.transaction import atomic
 from .fields import CustomManyToManyField, InheritedManyToManyField
@@ -29,7 +29,7 @@ class SchemaTests(TransactionTestCase):
         Author, AuthorWithM2M, Book, BookWithLongName, BookWithSlug,
         BookWithM2M, Tag, TagIndexed, TagM2MTest, TagUniqueRename, UniqueTest,
         Thing, TagThrough, BookWithM2MThrough, AuthorWithEvenLongerName,
-        BookWeak, BookWithO2O, BookWithoutFK,
+        BookWeak, BookWithO2O, BookWithoutFK, Note,
     ]
 
     # Utility functions
@@ -427,6 +427,8 @@ class SchemaTests(TransactionTestCase):
     def test_alter_text_field(self):
         # Regression for "BLOB/TEXT column 'info' can't have a default value")
         # on MySQL.
+        with connection.schema_editor() as editor:
+            editor.create_model(Note)
         new_field = TextField(blank=True)
         new_field.set_attributes_from_name("info")
         with connection.schema_editor() as editor:
@@ -436,6 +438,39 @@ class SchemaTests(TransactionTestCase):
                 new_field,
                 strict=True,
             )
+
+    @skipIfDBFeature('interprets_empty_strings_as_nulls')
+    def test_alter_textual_field_keep_null_status(self):
+        """
+        Changing a field type shouldn't affect the not null status.
+        """
+        with connection.schema_editor() as editor:
+            editor.create_model(Note)
+        with self.assertRaises(IntegrityError):
+            Note.objects.create(info=None)
+        old_field = Note._meta.get_field("info")
+        new_field = CharField(max_length=50)
+        new_field.set_attributes_from_name("info")
+        with connection.schema_editor() as editor:
+            editor.alter_field(Note, old_field, new_field, strict=True)
+        with self.assertRaises(IntegrityError):
+            Note.objects.create(info=None)
+
+    def test_alter_numeric_field_keep_null_status(self):
+        """
+        Changing a field type shouldn't affect the not null status.
+        """
+        with connection.schema_editor() as editor:
+            editor.create_model(UniqueTest)
+        with self.assertRaises(IntegrityError):
+            UniqueTest.objects.create(year=None, slug='aaa')
+        old_field = UniqueTest._meta.get_field("year")
+        new_field = BigIntegerField()
+        new_field.set_attributes_from_name("year")
+        with connection.schema_editor() as editor:
+            editor.alter_field(UniqueTest, old_field, new_field, strict=True)
+        with self.assertRaises(IntegrityError):
+            UniqueTest.objects.create(year=None, slug='bbb')
 
     def test_alter_null_to_not_null(self):
         """

@@ -501,6 +501,15 @@ message key.
     ``True`` will cause the field to have ``editable=False`` and ``blank=True``
     set.
 
+.. note::
+    The ``auto_now`` and ``auto_now_add`` options will always use the date in
+    the :ref:`default timezone <default-current-time-zone>` at the moment of
+    creation or update. If you need something different, you may want to
+    consider simply using your own callable default or overriding ``save()``
+    instead of using ``auto_now`` or ``auto_now_add``; or using a
+    ``DateTimeField`` instead of a ``DateField`` and deciding how to handle the
+    conversion from datetime to date at display time.
+
 ``DateTimeField``
 -----------------
 
@@ -1589,7 +1598,7 @@ Field API reference
 
     All of Django's built-in fields, such as :class:`CharField`, are particular
     implementations of ``Field``. If you need a custom field, you can either
-    subclass any of the built-in fields or write a ``Field``` from scratch. In
+    subclass any of the built-in fields or write a ``Field`` from scratch. In
     either case, see :doc:`/howto/custom-model-fields`.
 
     .. attribute:: description
