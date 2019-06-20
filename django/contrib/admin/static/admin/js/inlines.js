@@ -68,7 +68,7 @@
             }
         };
 
-        var addInlineDeleteButton = function (row) {
+        var addInlineDeleteButton = function(row) {
             if (row.is("tr")) {
                 // If the forms are laid out in table rows, insert
                 // the remove button into the last table cell:
@@ -86,12 +86,18 @@
             row.find("a." + options.deleteCssClass).on('click', inlineDeleteHandler.bind(this));
         };
 
+        $this.each(function() {
+            $(this).not("." + options.emptyCssClass).addClass(options.formCssClass);
+        });
+
+        // add the remove buttons to unsaved inlines
+        $this.filter('.form-row.' + options.formCssClass + ':not(.has_original)').each(function() {
+            addInlineDeleteButton($(this));
+        });
+
         // only show the add button if we are allowed to add more items,
         // note that max_num = None translates to a blank string.
         var showAddButton = maxForms.val() === '' || (maxForms.val() - totalForms.val()) > 0;
-        $this.each(function(i) {
-            $(this).not("." + options.emptyCssClass).addClass(options.formCssClass);
-        });
         if ($this.length && showAddButton) {
             var addButton = options.addButton;
             if (addButton === null) {
