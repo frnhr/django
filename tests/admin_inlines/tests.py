@@ -135,7 +135,7 @@ class TestInline(TestDataMixin, TestCase):
         # Here colspan is "4": two fields (title1 and title2), one hidden field and the delete checkbox.
         self.assertContains(
             response,
-            '<tr><td colspan="4"><ul class="errorlist nonfield">'
+            '<tr class="row-form-errors"><td colspan="4"><ul class="errorlist nonfield">'
             '<li>The two titles must be the same</li></ul></td></tr>'
         )
 

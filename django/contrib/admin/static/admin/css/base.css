@@ -284,11 +284,11 @@ tr.alt {
     background: #f6f6f6;
 }
 
-.row1 {
+.row1, .row-form-errors {
     background: #fff;
 }
 
-.row2 {
+.row2, .row1 + .row-form-errors {
     background: #f9f9f9;
 }
 
