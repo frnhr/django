@@ -134,6 +134,21 @@ class TestIterModulesAndFiles(SimpleTestCase):
         main_module = sys.modules['__main__']
         self.assertFileFound(Path(main_module.__file__))
 
+    def test_main_module_without_file_is_not_resolved(self):
+        fake_main = types.ModuleType('__main__')
+        self.assertEqual(autoreload.iter_modules_and_files((fake_main,), frozenset()), frozenset())
+
+    def test_path_with_embedded_null_bytes(self):
+        for path in (
+            'embedded_null_byte\x00.py',
+            'di\x00rectory/embedded_null_byte.py',
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(
+                    autoreload.iter_modules_and_files((), frozenset([path])),
+                    frozenset(),
+                )
+
 
 class TestCommonRoots(SimpleTestCase):
     def test_common_roots(self):
@@ -499,6 +514,12 @@ class BaseReloaderTests(ReloaderTests):
         self.reloader.watch_file(self.existing_file)
         watched_files = list(self.reloader.watched_files())
         self.assertIn(self.existing_file, watched_files)
+
+    def test_watch_dir_with_unresolvable_path(self):
+        path = Path('unresolvable_directory')
+        with mock.patch.object(Path, 'absolute', side_effect=FileNotFoundError):
+            self.reloader.watch_dir(path, '**/*.mo')
+        self.assertEqual(list(self.reloader.directory_globs), [])
 
     def test_watch_with_glob(self):
         self.reloader.watch_dir(self.tempdir, '*.py')

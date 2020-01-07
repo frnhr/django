@@ -284,7 +284,7 @@ transform do not change. For example::
     similar to PostgreSQL's ``text`` type.
 
     .. _citext: https://www.postgresql.org/docs/current/citext.html
-    .. _the performance considerations: https://www.postgresql.org/docs/current/citext.html#AEN178177
+    .. _the performance considerations: https://www.postgresql.org/docs/current/citext.html#id-1.11.7.17.7
 
 ``HStoreField``
 ===============
@@ -887,7 +887,7 @@ Returned objects are empty ranges. Can be chained to valid lookups for a
     <QuerySet []>
 
 Defining your own range types
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 PostgreSQL allows the definition of custom range types. Django's model and form
 field implementations use base classes below, and psycopg2 provides a
