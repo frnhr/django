@@ -45,7 +45,8 @@ algorithm the system follows to determine which Python code to execute:
    :func:`django.urls.path` and/or :func:`django.urls.re_path` instances.
 
 #. Django runs through each URL pattern, in order, and stops at the first
-   one that matches the requested URL.
+   one that matches the requested URL, matching against
+   :attr:`~django.http.HttpRequest.path_info`.
 
 #. Once one of the URL patterns matches, Django imports and calls the given
    view, which is a Python function (or a :doc:`class-based view
@@ -153,7 +154,7 @@ A converter is a class that includes the following:
   string into the type that should be passed to the view function. It should
   raise ``ValueError`` if it can't convert the given value. A ``ValueError`` is
   interpreted as no match and as a consequence a 404 response is sent to the
-  user.
+  user unless another URL pattern matches.
 
 * A ``to_url(self, value)`` method, which handles converting the Python type
   into a string to be used in the URL.
