@@ -53,12 +53,6 @@ Specify a translation string by using the function
 as a shorter alias, ``_``, to save typing.
 
 .. note::
-    The ``u`` prefixing of ``gettext`` functions was originally to distinguish
-    usage between unicode strings and bytestrings on Python 2. For code that
-    supports only Python 3, they can be used interchangeably. A deprecation for
-    the prefixed functions may happen in a future Django release.
-
-.. note::
     Python's standard library ``gettext`` module installs ``_()`` into the
     global namespace, as an alias for ``gettext()``. In Django, we have chosen
     not to follow this practice, for a couple of reasons:
@@ -130,7 +124,7 @@ specified with Python's standard named-string interpolation syntax. Example::
 
 This technique lets language-specific translations reorder the placeholder
 text. For example, an English translation may be ``"Today is November 26."``,
-while a Spanish translation may be ``"Hoy es 26 de Noviembre."`` -- with the
+while a Spanish translation may be ``"Hoy es 26 de noviembre."`` -- with the
 month and the day placeholders swapped.
 
 For this reason, you should use named-string interpolation (e.g., ``%(day)s``)
@@ -551,7 +545,7 @@ Similar access to this information is available for template code. See below.
 Internationalization: in template code
 ======================================
 
-.. highlightlang:: html+django
+.. highlight:: html+django
 
 Translations in :doc:`Django templates </ref/templates/language>` uses two template
 tags and a slightly different syntax than in Python code. To give your template
@@ -952,7 +946,7 @@ There are also some filters available for convenience:
 Internationalization: in JavaScript code
 ========================================
 
-.. highlightlang:: python
+.. highlight:: python
 
 Adding translations to JavaScript poses some problems:
 
@@ -1039,7 +1033,7 @@ precedence.
 Using the JavaScript translation catalog
 ----------------------------------------
 
-.. highlightlang:: javascript
+.. highlight:: javascript
 
 To use the catalog, pull in the dynamically generated script like this:
 
@@ -1817,7 +1811,7 @@ redirected in the ``redirect_to`` context variable.
 Explicitly setting the active language
 --------------------------------------
 
-.. highlightlang:: python
+.. highlight:: python
 
 You may want to set the active language for the current session explicitly. Perhaps
 a user's language preference is retrieved from another system, for example.
